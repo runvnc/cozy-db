@@ -2,6 +2,7 @@ log = require('printit')
     date: true
     prefix: 'Cozy DB'
 
+sharedSession = require 'shared-cookie-session'
 
 # Public: the Model constructor
 module.exports.Model = Model = require './model'
@@ -33,7 +34,8 @@ module.exports.getModel = (name, schema) ->
     klass.displayName = klass.name = name
     klass.toString = -> "#{name}Constructor"
     klass.docType = name
-
+    if sharedSession.session? and sharedSession.session.user?
+      klass.docType = "#{sharedSession.session.user}_#{name}"
     return klass
 
 module.exports.api = api = require './api'
