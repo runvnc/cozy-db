@@ -34,8 +34,6 @@ module.exports.getModel = (name, schema) ->
     klass.displayName = klass.name = name
     klass.toString = -> "#{name}Constructor"
     klass.docType = name
-    if sharedSession.session? and sharedSession.session.user?
-      klass.docType = "#{sharedSession.session.user}_#{name}"
     return klass
 
 module.exports.api = api = require './api'

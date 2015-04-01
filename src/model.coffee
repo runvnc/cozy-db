@@ -20,11 +20,18 @@ _wrapCallback = (that, changes, callback) ->
 # Public: the model class
 class Model
 
+    @getDBUser: ->
+      if process? and process.session?
+        process.session.user
+      else
+        ""
+
     # STATIC FUNCTIONS
     # Private: get the Model's docType
     #
     # Returns {String} the model docType
-    @getDocType: -> this.docType?.toLowerCase() or this.name.toLowerCase()
+    @getDocType: ->
+      @getDBUser() + (this.docType?.toLowerCase() or this.name.toLowerCase())
 
     # Public: check if a model with given Id exists.
     #
