@@ -13,7 +13,7 @@ pouchdbDataAdapter =
 
     # Check existence of model in the data system.
     exists: (id, callback) ->
-        @db.get id, (err, doc) ->
+        PouchdbBackedModel.db.get id, (err, doc) ->
             if err and not err.status is 404
                 callback err
             else if err?.status is 404
@@ -22,36 +22,34 @@ pouchdbDataAdapter =
                 callback null, true
 
     find: (id, callback) ->
-        @db.get id, (err, doc) =>
+        PouchdbBackedModel.db.get id, (err, doc) ->
             if err
                 callback err
             else if not doc?
                 callback null, null
-            else if doc.docType.toLowerCase() isnt @getDocType().toLowerCase()
-                callback null, null
             else
-                callback null, new @ doc
+                callback null, doc
 
     create: (attributes, callback) ->
-        func = 'post'
         if attributes.id? or attributes._id?
-            attributes.id = attributes._id unless attributes.id?
-            attributes._id = attributes.id unless attributes._id?
+            attributes.id = attributes._id unless attributes.id
+            attributes._id = attributes.id unless attributes._id
             func = 'put'
         else
-            attributes._id = uuid.v4().split('-').join('')
+            attributes._id = attributes.id = uuid.v4().split('-').join('')
+            func = 'post'
 
-        @db[func] attributes, (err, response) ->
+        PouchdbBackedModel.db[func] attributes, (err, response) ->
             if err
                 callback err
             else if not response.ok
                 callback new Error 'An error occured while creating document.'
             else
-                callback null, response.id
+                callback null, {id: response.id}
 
     save: (id, attributes, callback) ->
         attributes.docType = @getDocType()
-        @db.get attributes.id, (err, doc) =>
+        PouchdbBackedModel.db.get id, (err, doc) =>
             if err
                 callback err
             else if not doc?
@@ -61,7 +59,7 @@ pouchdbDataAdapter =
             else
                 attributes._id = attributes.id
                 attributes._rev = doc._rev
-                @db.put attributes, (err, response) ->
+                PouchdbBackedModel.db.put attributes, (err, response) ->
                     if err
                         callback err
                     if not response.ok
@@ -69,18 +67,37 @@ pouchdbDataAdapter =
                             An error occured while saving document.'
                         """
                     else
-                        callback()
+                        callback null, attributes
 
     updateAttributes: (id, attributes, callback) ->
-        # @TODO, this should actually merge
-        @save id, attributes, callback
+        docType = @getDocType()
+        PouchdbBackedModel.db.get id, (err, doc) ->
+            if err
+                callback err
+            else if not doc?
+                callback new Error 'document does not exist'
+            else if doc.docType.toLowerCase() isnt docType.toLowerCase()
+                callback new Error 'document does not exist'
+            else
+                for own key, value of attributes
+                    throw new Error("NOW") if key is '0'
+                    doc[key] = value
+                PouchdbBackedModel.db.put doc, (err, response) ->
+                    if err
+                        callback err
+                    if not response.ok
+                        callback new Error """
+                            An error occured while updating document.'
+                        """
+                    else
+                        callback null, doc
 
     destroy: (id, callback) ->
-        @db.get id, (err, doc) =>
+        PouchdbBackedModel.db.get id, (err, doc) ->
             if err
                 callback err
             else
-                @db.remove doc, callback
+                PouchdbBackedModel.db.remove doc, callback
 
 # @todo implement me using pouchdb-quick-search
 pouchdbIndexAdapter =
@@ -187,40 +204,36 @@ pouchdbRequestsAdapter =
         view.reduce = reduce.toString() if reduce?
 
         viewName = "_design/#{docType.toLowerCase()}"
-        @db.get viewName, (err, designDoc) =>
+        PouchdbBackedModel.db.get viewName, (err, designDoc) ->
             unless designDoc?
                 designDoc =
                     _id: viewName
                     views: {}
             unless designDoc.views?
                 designDoc.views = {}
-            designDoc.views[name] = view
-            @db.put designDoc, (err, designDoc) ->
+            designDoc.views[name.toLowerCase()] = view
+            PouchdbBackedModel.db.put designDoc, (err, designDoc) ->
                 callback()
 
     run: (name, params, callback) ->
         [params, callback] = [{}, params] if typeof(params) is "function"
         docType = @getDocType()
 
-        viewName = "#{docType.toLowerCase()}/#{name}"
-        @db.query viewName, params, (err, body) =>
+        viewName = "#{docType.toLowerCase()}/#{name.toLowerCase()}"
+        PouchdbBackedModel.db.query viewName, params, (err, body) ->
             if err
                 callback err
             else
-                results = []
-                for doc in body.rows
-                    doc.value.id = doc.value._id
-                    results.push new @ doc.value
-                callback null, results
+                callback null, body.rows
 
     remove: (name, callback) ->
         docType = @getDocType()
         name = '_design/' + docType.toLowerCase() + '/' + name
-        @db.get name, (err, doc) ->
+        PouchdbBackedModel.db.get name, (err, doc) ->
             if err
                 callback err
             else
-                @db.remove doc, callback
+                PouchdbBackedModel.db.remove doc, callback
 
     requestDestroy: (name, params, callback) ->
         [params, callback] = [{}, params] if typeof(params) is "function"
@@ -255,3 +268,4 @@ module.exports = class PouchdbBackedModel extends Model
             @schema.id = String
             @schema.docType = String
             @schema.binaries = Object
+        super
