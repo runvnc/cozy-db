@@ -116,18 +116,3 @@ module.exports.configure = (options, app, callback) ->
     # loop over them asynchroniously
     step 0
 
-userModels = {}
-
-exports.modelForUser = (model, schema, user, cb) ->
-  key = user+'_'+model
-  if userModel[key] then return cb userModel[key]
-
-  opts =
-    model: new (require './pouchmodel')
-    dbName: user
-
-  module.exports.configure opts, null, ->
-    userModel[key] = getModel model, schema, opts.model
-    cb userModel[key]
-
-
