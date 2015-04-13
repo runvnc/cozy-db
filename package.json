@@ -1,0 +1,56 @@
+{
+  "name": "cozy-db-pouchdb",
+  "version": "0.0.13",
+  "description": "ODM for PouchDB database",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha tests/*.coffee --bail --compilers coffee:coffee-script/register",
+    "test:unit": "mocha tests/type_checking.coffee --bail --compilers coffee:coffee-script/register",
+    "lint": "coffeelint src -f .coffeelint.json",
+    "build": "coffee  --output lib --compile src",
+    "build:doc": "biscotto",
+    "prepublish": "npm run build && npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/cozy/cozy-db"
+  },
+  "author": {
+    "name": "cozy"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cozy/cozy-db/issues"
+  },
+  "homepage": "https://github.com/cozy/cozy-db",
+  "devDependencies": {
+    "async": "0.9.0",
+    "biscotto": "git+https://github.com/gjtorikian/biscotto#992d826f87791ed267b456b822861d4b2b10d9ba",
+    "coffee-jshint": "0.2.2",
+    "coffee-script": "1.8.0",
+    "coffeelint": "1.8.1",
+    "lodash.isequal": "2.4.1",
+    "mocha": "1.21.5",
+    "shared-cookie-session": "",
+    "request-json": "0.5.0",
+    "should": "4.0.4"
+  },
+  "dependencies": {
+    "mkdirp": "0.5.0",
+    "node-uuid": "1.4.3",
+    "pouchdb": "3.3.1",
+    "printit": "0.1.6",
+    "remove": "0.1.5",
+    "request-json-light": "0.5.13"
+  },
+  "readme": "# [Cozy](http://cozy.io) ORM\r\n\r\nReplacement of jugglingdb for cozy application.\r\n\r\nRead [the doc](http://cozy.github.io/cozy-db/doc/DOCINDEX.md.html)\r\n\r\n## Contribution\r\n\r\nYou can contribute to cozydb in many ways:\r\n\r\n* Pick up an [issue](https://github.com/cozy/cozy-db/issues?state=open)\r\nand solve it.\r\n* Write new tests.\r\n\r\nBefore submitting a pull request, make sure you have\r\nbuild & linted your code with\r\n\r\n    npm run prepublish\r\n\r\n## Tests\r\n\r\n[![Build\r\nStatus](https://travis-ci.org/cozy/cozydb.png?branch=master)](https://travis-ci.org/cozy/cozydb)\r\n\r\nRun tests with following commmand\r\n\r\n    npm test\r\n\r\n## LICENSE\r\n[AGPL v3](https://github.com/cozy/cozydb/blob/master/LICENSE.md)\r\n\r\n## What is Cozy?\r\n\r\n![Cozy Logo](https://raw.github.com/mycozycloud/cozy-setup/gh-pages/assets/images/happycloud.png)\r\n\r\n[Cozy](http://cozy.io) is a platform that brings all your web services in the\r\nsame private space.  With it, your web apps and your devices can share data\r\neasily, providing you\r\nwith a new experience. You can install Cozy on your own hardware where no one\r\nprofiles you.\r\n\r\n## Community\r\n\r\nYou can reach the Cozy Community by:\r\n\r\n* Chatting with us on IRC #cozycloud on irc.freenode.net\r\n* Posting on our [Forum](https://groups.google.com/forum/?fromgroups#!forum/cozy-cloud)\r\n* Posting issues on the [Github repos](https://github.com/mycozycloud/)\r\n* Mentioning us on [Twitter](http://twitter.com/mycozycloud)\r\n",
+  "readmeFilename": "README.md",
+  "_id": "cozy-db-pouchdb@0.0.13",
+  "_shasum": "02077fe803140637bb706899d16935282e203205",
+  "_resolved": "git://github.com/runvnc/cozy-db#7e72385e61e6bb1a1733474d437b3997814e7c34",
+  "_from": "git://github.com/runvnc/cozy-db",
+  "_fromGithub": true
+}
