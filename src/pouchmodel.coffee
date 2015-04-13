@@ -253,7 +253,6 @@ pouchdbRequestsAdapter =
 # Public: a model backed by the pouchdb data-system
 #    expose the complete {Model} interface
 module.exports = class PouchdbBackedModel extends Model
-    constructor: ->
     @adapter         : pouchdbDataAdapter
     @indexAdapter    : pouchdbIndexAdapter
     @fileAdapter     : pouchdbFileAdapter

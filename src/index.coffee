@@ -2,7 +2,7 @@ log = require('printit')
     date: true
     prefix: 'Cozy DB'
 
- Public: the Model constructor
+# Public: the Model constructor
 module.exports.Model = Model = require './model'
 
 # Public: the CozyModel constructor
